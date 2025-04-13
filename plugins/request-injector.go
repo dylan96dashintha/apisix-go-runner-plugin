@@ -90,7 +90,7 @@ func (re *RequestInjectorPlugin) RequestFilter(conf interface{}, w http.Response
 	if !validateAzp(azp, config.ValidAzpList) {
 		http.Error(w, "Unauthorized azp", http.StatusUnauthorized)
 	}
-	w.Header().Set("X-User-Id", userId)
+	r.Header().Set("X-User-Id", userId)
 
 }
 

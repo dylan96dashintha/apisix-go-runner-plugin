@@ -32,18 +32,21 @@ func (re *RequestInjectorPlugin) ParseConf(in []byte) (interface{}, error) {
 	return conf, err
 }
 
-func (re *RequestInjectorPlugin) RequestFilter(conf interface{}, w http.ResponseWriter, r pkgHTTP.Request) {
+func (re *RequestInjectorPlugin) RequestFilter(conf interface{},
+	w http.ResponseWriter, r pkgHTTP.Request) {
 	config, _ := conf.(RequestInjectorConfig)
 	authHeader := r.Header().Get("Authorization")
 	if authHeader == "" {
-		http.Error(w, "Authorization header missing", http.StatusUnauthorized)
+		http.Error(w, "Authorization header missing",
+			http.StatusUnauthorized)
 		return
 	}
 
 	// Expecting header in format "Bearer <token>"
 	parts := strings.SplitN(authHeader, " ", 2)
 	if len(parts) != 2 || strings.ToLower(parts[0]) != "bearer" {
-		http.Error(w, "Invalid Authorization header format", http.StatusUnauthorized)
+		http.Error(w, "Invalid Authorization header format",
+			http.StatusUnauthorized)
 		return
 	}
 
@@ -51,15 +54,17 @@ func (re *RequestInjectorPlugin) RequestFilter(conf interface{}, w http.Response
 	log.Infof("token string, token:", tokenString)
 
 	// Parse and validate the JWT
-	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-		// Make sure token algorithm matches expected
-		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			log.Errorf("not ok : ", ok)
-			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
-		}
-		log.Infof("secret :", config.SecretKey)
-		return []byte(config.SecretKey), nil
-	})
+	token, err := jwt.Parse(tokenString,
+		func(token *jwt.Token) (interface{}, error) {
+			// Make sure token algorithm matches expected
+			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+				log.Errorf("not ok : ", ok)
+				return nil,
+					fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+			}
+			log.Infof("secret :", config.SecretKey)
+			return []byte(config.SecretKey), nil
+		})
 
 	if err != nil || !token.Valid {
 		http.Error(w, "Invalid token", http.StatusUnauthorized)
@@ -84,7 +89,8 @@ func (re *RequestInjectorPlugin) RequestFilter(conf interface{}, w http.Response
 			}
 		}
 	} else {
-		http.Error(w, "Could not parse claims", http.StatusInternalServerError)
+		http.Error(w, "Could not parse claims",
+			http.StatusInternalServerError)
 	}
 
 	if !validateAzp(azp, config.ValidAzpList) {
@@ -103,7 +109,8 @@ func validateAzp(azp string, validAzpList []string) bool {
 	return false
 }
 
-func (re *RequestInjectorPlugin) ResponseFilter(conf interface{}, w pkgHTTP.Response) {
+func (re *RequestInjectorPlugin) ResponseFilter(conf interface{},
+	w pkgHTTP.Response) {
 	//TODO implement me
 	panic("implement me")
 }

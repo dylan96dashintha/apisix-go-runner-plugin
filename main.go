@@ -14,7 +14,7 @@ func main() {
 	cfg.LogLevel = zapcore.DebugLevel
 	err := plugin.RegisterPlugin(&plugins.RequestInjectorPlugin{})
 	if err != nil {
-		log.Fatalf("failed to register plugin BasicAuthPlugin: %s", err)
+		log.Fatalf("failed to register plugin RequestInjector, err: %s", err)
 	}
 	runner.Run(cfg)
 }

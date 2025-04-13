@@ -107,8 +107,3 @@ func (re *RequestInjectorPlugin) ResponseFilter(conf interface{}, w pkgHTTP.Resp
 	//TODO implement me
 	panic("implement me")
 }
-
-type BasicAuthConfig struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
-}
